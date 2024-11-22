@@ -3,38 +3,47 @@
 #include "Constants.h"
 
 
-void Motor::init(side s) {
+void Motor::init(side_t side) {
   /*Initialise le moteur a rotation continue en fonction de son cote sur le chassis*/
-  motor_side = s;
+  _motor_side = side;
 
-  if(s == LEFT) {
-    motor_port.attach(A1);
-    motor_backward_stop = MOTOR_G_BACKWARD_STOP;
-    motor_forward_stop = MOTOR_G_FORWARD_STOP;
-    motor_speed_range = MOTOR_G_SPEED_RANGE;
+  if(side == LEFT) {
+    _motor_port.attach(A1);
+    _motor_stop = MOTOR_G_STOP;
+    _motor_speed_range = MOTOR_G_SPEED_RANGE;
   }
-  else if(s == RIGHT) {
-    motor_port.attach(A0);
-    motor_backward_stop = MOTOR_D_BACKWARD_STOP;
-    motor_forward_stop = MOTOR_D_FORWARD_STOP;
-    motor_speed_range = MOTOR_D_SPEED_RANGE;
+  else if(side == RIGHT) {
+    _motor_port.attach(A0);
+    _motor_stop = MOTOR_D_STOP; 
+    _motor_speed_range = MOTOR_D_SPEED_RANGE;
   }
 }
 
-void Motor::run(rundir dir) {
+void Motor::run(rundir_t dir) {
   /*Fait tourner le moteur dans la direction souhaitee en fonction du cote du moteur sur le chassis de manière infinie*/
-  if(dir == FORWARD) {
-    if(motor_side == LEFT) motor_port.writeMicroseconds(motor_forward_stop + motor_speed_range - 7);
-    else if(motor_side == RIGHT) motor_port.writeMicroseconds(motor_forward_stop - motor_speed_range);
-  }
+  
+  switch (dir)
+  {
+  case FORWARD:
+    if(_motor_side == LEFT) 
+      _motor_port.writeMicroseconds(_motor_stop + _motor_speed_range*ROBOT_L_MOTOR_COEF*ROBOT_SPEED_COEF);
+    else if(_motor_side == RIGHT) 
+      _motor_port.writeMicroseconds(_motor_stop - _motor_speed_range*ROBOT_R_MOTOR_COEF*ROBOT_SPEED_COEF);
+    break;
 
-  else if(dir == BACKWARD) {
-    if(motor_side == LEFT) motor_port.writeMicroseconds(motor_backward_stop - motor_speed_range);
-    else if(motor_side == RIGHT) motor_port.writeMicroseconds(motor_backward_stop + motor_speed_range);
-  }
+  case BACKWARD:
+    if(_motor_side == LEFT) 
+      _motor_port.writeMicroseconds(_motor_stop - _motor_speed_range*ROBOT_L_MOTOR_COEF*ROBOT_SPEED_COEF);
+    else if(_motor_side == RIGHT)
+      _motor_port.writeMicroseconds(_motor_stop + _motor_speed_range*ROBOT_R_MOTOR_COEF*ROBOT_SPEED_COEF);
+    break;
 
-  else if(dir == STOP) {
-    motor_port.writeMicroseconds(motor_backward_stop);
+  case STOP:
+    _motor_port.writeMicroseconds(_motor_stop);
+    break;
+  
+  default:
+    break;
   }
 }
 

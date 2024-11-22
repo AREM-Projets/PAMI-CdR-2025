@@ -1,3 +1,10 @@
+/*
+TODO:
+- fonctions de positionnement relatif (en premier)
+- fonctions de positionnement absolu (en second)
+*/
+
+
 #pragma once
 
 #include "Constants.h"
@@ -5,33 +12,41 @@
 #include "Motor.h"
 
 
+
 class Base
 {
 public:
   void init();
-  void run(rundir dir);
-  void stop(void);
-  bool proximity(unsigned int seuil = 140);
-  void print_param(void);
-  void run_m(rundir dir, float d);
-  void turn_deg(side s, unsigned int a);
-  float get_posx(void);
-  float get_posy(void);
-  float get_angle(void);
 
-  Tof sensor;
+  void run(rundir_t dir);
+  void runDistance(double dist_m);
+  void turn(double angle_rad);
+  void stop(void);
+  
+  uint16_t getSensorDistance(void);
+
+  void printParams(void);
+
+  double getPosX(void);
+  double getPosY(void);
+  double getAngle(void);
+
+  rundir_t getMotorsStatus(void);
+
+  
 
 
 private:
-  Motor motorL;
-  Motor motorR;
+  Motor _motorL;
+  Motor _motorR;
+  Tof _sensor;
   
   // motors variables
-  unsigned long motors_start_time;
-  bool motors_on;
+  unsigned long _motors_start_time;
+  rundir_t _motors_state;
 
   // theorical position values
-  float posx_th; //m
-  float posy_th; //m
-  float angle_th; //rad
+  double _posx_th; //m
+  double _posy_th; //m
+  double _angle_th; //rad
 };
